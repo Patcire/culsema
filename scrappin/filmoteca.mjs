@@ -1,4 +1,5 @@
-import {chromium} from "playwright";
+import {chromium} from "playwright"
+import { writeFile } from 'fs'
 
 const browser = await chromium.launch({
         headless: true
@@ -6,17 +7,22 @@ const browser = await chromium.launch({
 
 const page = await browser.newPage()
 
-await page.goto('https://entradasfilmoteca.gob.es/Calendario.aspx')
+await page.goto('https://entradasfilmoteca.gob.es/listaPeliculas.aspx')
 
-const films = await page.$$eval(
-    '#Calendario a',
-    (results) =>{
-        results.map((el) =>{
-            const dayNumber = el.querySelector('td > a:first-child').textContent
-            const dayOfTheWeek = el.querySelector('.diaSemana').textContent
-            const filmTime = el.querySelector('#text:nth-child(1)').textContent
-            const filmTitle = el.querySelector('#text:nth-child(2)').textContent
+const films = await page.$$eval('.thumbnail', results =>{
+        return results.map(el =>{
+            const poster = el.querySelector('input')?.src || ''
+            const dayInfo = el.querySelector('h2')?.textContent.replace(/\s*\n\s*/g, ' ').trim().trim() || ''
+            const filmTitle = el.querySelector('.linkPelicula')?.textContent.replace(/\s*\n\s*/g, ' ').trim() || ''
+            const director = el.querySelector('h3')?.textContent.replace(/\s*\n\s*/g, ' ').trim() || ''
+
+            return {poster, dayInfo, filmTitle, director}
         })
-    }
-)
+})
+
+await browser.close()
+writeFile('films.json',
+    JSON.stringify(films, null, 2), 'utf8', (error) =>{})
+
+
 
