@@ -1,14 +1,20 @@
 import {chromium} from "playwright"
 import { writeFile } from 'fs'
 
-const browser = await chromium.launch({headless: true})
-const context = await browser.newContext({ javaScriptEnabled: false })
+console.log('start')
+const browser = await chromium.launch({headless: false})
 const page = await browser.newPage()
 await page.goto('https://www.filmaffinity.com/es/theater-showtimes.php?id=1261')
-await page.isVisible('button.css-113jtbf')
-await page.click('button.css-113jtbf')
-await page.waitForSelector('button.css-113jtbf', {state: 'detached'})
-await page.click('.see-more' )
+await page.locator('button.css-113jtbf').nth(1).click()
+const selectors = page.locator('.btn.btn-sm.btn-outline-secondary.d-flex.justify-content-between.see-more')
+const count = await selectors.count()
+console.log(count)
+for (let i = 0; i<count; i++){
+    await selectors.nth(i).scrollIntoViewIfNeeded()
+    await selectors.nth(i).click()
+    await page.waitForTimeout(100)
+    console.log('click')
+}
 
 const films = await page.$$eval('.movie', results =>{
         return results.map(el =>{
@@ -20,7 +26,7 @@ const films = await page.$$eval('.movie', results =>{
             return {poster, dateInfo, filmTitle, director, linkToPurchase}
         })
 })
-
+console.log('cerramos')
 await browser.close()
 writeFile('films.json',
     JSON.stringify(films, null, 2), 'utf8', (error) =>{})
