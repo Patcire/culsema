@@ -1,16 +1,16 @@
 import {chromium} from "playwright"
 import { writeFile } from 'fs'
 
-const browser = await chromium.launch({headless: false})
+const browser = await chromium.launch({headless: true})
 const page = await browser.newPage()
 await page.goto('https://www.filmaffinity.com/es/theater-showtimes.php?id=1261')
 await page.locator('button.css-113jtbf').nth(1).click()
 
-let selectors = page.locator('.btn.see-more')
+let selectors = page.locator('.see-more')
 let count = await selectors.count()
 
 for (let i = 0; i<count; i++){
-    console.log('count inicio bucle: ', count)
+
     await selectors.nth(i).scrollIntoViewIfNeeded()
     await selectors.nth(i).waitFor({ state: 'visible', timeout: 15000 })
     await selectors.nth(i).click({timeout: 5000})
