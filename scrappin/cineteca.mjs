@@ -1,26 +1,37 @@
 import {chromium} from "playwright"
 import { writeFile } from 'fs'
 
-const browser = await chromium.launch({
-    headless: true
-})
-
+const browser = await chromium.launch({headless: true})
 const page = await browser.newPage()
 
-await page.goto('https://www.cinetecamadrid.com/programacion')
+const urlDinamic = (pageNumber) =>{
+    return `https://www.cinetecamadrid.com/programacion?page=${pageNumber}`
+}
 
-const films = await page.$$eval('.views-row', results =>{
-    return results.map(el =>{
-        const poster = el.querySelector('')?.src || ''
-        const dateInfo = el.querySelector('')?.textContent.replace(/\s*\n\s*/g, ' ').trim().trim() || ''
-        const filmTitle = el.querySelector('')?.textContent.replace(/\s*\n\s*/g, ' ').trim() || ''
-        const director = el.querySelector('')?.textContent.replace(/\s*\n\s*/g, ' ').trim() || ''
-        const linkToPurchase = el.querySelector('')?.src || ''
+const getCinetecafilms = async () =>{
+    return await page.$$eval('.views-row', results =>{
+        return results.map(el =>{
+            const poster = el.querySelector('.image-style-miniaturas')?.src || ''
+            const dateInfo = el.querySelector('.field.field--name-field-dias-de-proyeccion.field--type-datetime.field--label-hidden.field__items')?.textContent.trim().trim() || ''
+            const filmTitle = el.querySelector('.title')?.textContent.trim() || ''
+            const director = el.querySelector('.director')?.textContent.trim() || ''
+            const linkToPurchase = el.querySelector('.title a')?.href || ''
 
-        return { filmTitle, director, dateInfo, poster, linkToPurchase}
+            return { filmTitle, director, dateInfo, poster, linkToPurchase}
 
+        })
     })
-})
+}
+
+let pageNumber = 0
+let films = []
+let selectors= 1
+
+while (selectors>0 ){
+    films = [...films, ...await getCinetecafilms()]
+    await page.goto(urlDinamic(pageNumber++))
+    selectors = await page.locator('.views-row').count()
+}
 
 await browser.close()
 writeFile('films.json',
