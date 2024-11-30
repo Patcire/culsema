@@ -22,15 +22,15 @@ for (let i = 0; i<count; i++){
 }
 
 const films = await page.$$eval('.movie', results =>{
-    return results.map(el =>{
-            const poster = el.querySelector('img')?.src || ''
+    return results.map(movie =>{
+            const poster = movie.querySelector('img')?.src || ''
             const dateInfo = Array.from(
-                el.querySelectorAll('.row.g-0.mb-2')).map(day =>
-                day.getAttribute('data-sess-date') || null
+                movie.querySelectorAll('.row.g-0.mb-2')).map(day =>
+                day.getAttribute('data-sess-date') || null,
             )
-            const filmTitle = el.querySelector('.fs-5')?.textContent || null
-            const director = Array.from(el.querySelectorAll('.mc-flex .mc-info-container .mc-director a')).map(dir => dir.textContent.trim() || '')
-            const linkToPurchase = el.querySelector('.btn.btn-sm.btn-outline-secondary')?.href || ''
+            const filmTitle = movie.querySelector('.fs-5')?.textContent || null
+            const director = Array.from(movie.querySelectorAll('.mc-flex .mc-info-container .mc-director a')).map(dir => dir.textContent.trim() || '')
+            const linkToPurchase = movie.querySelector('.btn.btn-sm.btn-outline-secondary')?.href || ''
             return { filmTitle, director, dateInfo, poster, linkToPurchase}
         })
 })
