@@ -23,14 +23,14 @@ for (let i = 0; i<count; i++){
 
 const films = await page.$$eval('.movie', results =>{
     return results.map(movie =>{
-            const poster = movie.querySelector('img')?.src || ''
+            const poster = movie.querySelector('img')?.src || null
             const dateInfo = Array.from(
                 movie.querySelectorAll('.row.g-0.mb-2')).map(day =>
                 day.getAttribute('data-sess-date') || null,
             )
             const filmTitle = movie.querySelector('.fs-5')?.textContent || null
-            const director = Array.from(movie.querySelectorAll('.mc-flex .mc-info-container .mc-director a')).map(dir => dir.textContent.trim() || '')
-            const linkToPurchase = movie.querySelector('.btn.btn-sm.btn-outline-secondary')?.href || ''
+            const director = Array.from(movie.querySelectorAll('.mc-flex .mc-info-container .mc-director a')).map(dir => dir.textContent.trim() || null)
+            const linkToPurchase = movie.querySelector('.btn.btn-sm.btn-outline-secondary')?.href || null
             return { filmTitle, director, dateInfo, poster, linkToPurchase}
         })
 })

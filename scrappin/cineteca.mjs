@@ -11,11 +11,11 @@ const urlDinamic = (pageNumber) =>{
 const getCinetecafilms = async () =>{
     return await page.$$eval('.views-row', results =>{
         return results.map(el =>{
-            const poster = el.querySelector('.image-style-miniaturas')?.src || ''
-            const dateInfo = el.querySelector('.field.field--name-field-dias-de-proyeccion.field--type-datetime.field--label-hidden.field__items')?.textContent.trim().trim() || ''
-            const filmTitle = el.querySelector('.title')?.textContent.trim() || ''
-            const director = el.querySelector('.director')?.textContent.trim() || ''
-            const linkToPurchase = el.querySelector('.title a')?.href || ''
+            const poster = el.querySelector('.image-style-miniaturas')?.src || null
+            const dateInfo = el.querySelector('.field.field--name-field-dias-de-proyeccion.field--type-datetime.field--label-hidden.field__items')?.textContent.trim().trim() || null
+            const filmTitle = el.querySelector('.title')?.textContent.trim() || null
+            const director = el.querySelector('.director')?.textContent.trim() || null
+            const linkToPurchase = el.querySelector('.title a')?.href || null
 
             return { filmTitle, director, dateInfo, poster, linkToPurchase}
 
