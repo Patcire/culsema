@@ -1,7 +1,7 @@
 import { chromium } from "playwright"
 import { writeFile } from 'fs'
 
-const browser = await chromium.launch({ headless: false })
+const browser = await chromium.launch({ headless: true })
 const page = await browser.newPage()
 await page.goto('https://cine.entradas.com/cine/madrid/sala-berlanga/sesiones')
 await page.locator('button.button-primary.button-sm').nth(2).click()
